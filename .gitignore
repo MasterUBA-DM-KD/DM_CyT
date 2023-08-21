@@ -1,3 +1,20 @@
+# Possible large files
+*.zip
+*.gz
+*.csv
+*.tar.gz
+*.parquet
+*.h5
+*.pkl
+
+# Pycharm
+.idea/
+
+# Images
+*.jpg
+*.jpeg
+*.png
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
