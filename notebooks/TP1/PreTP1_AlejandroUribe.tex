@@ -1,0 +1,259 @@
+\documentclass{article}
+
+
+% if you need to pass options to natbib, use, e.g.:
+\PassOptionsToPackage{numbers, compress}{natbib}
+% before loading neurips_2023
+
+
+% ready for submission
+% \usepackage{neurips_2023}
+
+
+% to compile a preprint version, e.g., for submission to arXiv, add add the
+% [preprint] option:
+% \usepackage[preprint]{neurips_2023}
+
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+\usepackage[final]{neurips_2023}
+
+
+% to avoid loading the natbib package, add option nonatbib:
+% \usepackage[nonatbib]{neurips_2023}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{xcolor}         % colors
+\usepackage{graphicx}
+\usepackage[font=footnotesize]{subcaption}
+\usepackage[font=footnotesize]{caption}
+\usepackage{amsmath}
+\usepackage{float}
+
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.15}
+\renewcommand{\floatpagefraction}{0.8}
+\renewcommand{\textfraction}{0.1}
+\setlength{\floatsep}{5pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{5pt plus 2pt minus 2pt}
+\setlength{\intextsep}{5pt plus 2pt minus 2pt}
+\graphicspath{ {static} }
+\captionsetup[figure]{font=small,skip=0pt}
+
+\title{Exploración, Transformación y Análisis de Componentes Principales de Imágenes de Flores}
+
+\author{
+  Alejandro Uribe\\
+  Universidad de Buenos Aires\\
+  \texttt{jauriberamirez@gmail.com}
+}
+
+
+\begin{document}
+
+\maketitle
+
+
+\begin{abstract}
+  El estudio exploró imágenes florales mediante transformaciones de datos y técnicas de agrupamiento sin usar modelos preentrenados. Este enfoque permitió desentrañar relaciones, identificar patrones y categorizarlas. Los hallazgos ofrecieron valiosas perspectivas sobre la diversidad y similitudes en estas imágenes, sentando así bases sólidas para futuras investigaciones en visión por computadora y clasificación floral. Destacó la posibilidad de extraer información relevante incluso sin entrenamiento de modelos.
+\end{abstract}
+
+
+\section{Introducción}
+
+El procesamiento de imágenes ha evolucionado desde los métodos analógicos utilizados en los inicios de la fotografía hasta las técnicas digitales de hoy en día. Con el avance de la computación, se ha vuelto posible aplicar transformaciones digitales para mejorar la calidad y características de las imágenes, superando los antiguos métodos físicos y químicos. Sin embargo, el aumento en la resolución de las cámaras ha generado imágenes digitales de alta dimensionalidad, planteando un desafío en su procesamiento.
+
+En el corazón de una imagen digital se encuentra una matriz de píxeles que representan colores a través de valores de intensidad de luz en un rango de 0 a 255. Para representar imágenes a color, se utiliza el modelo RGB, basado en los componentes primarios del color: Rojo, Verde y Azul. Este enfoque propuesto se centra en explorar el procesamiento de imágenes a través de transformaciones, con el objetivo de familiarizar al científico de datos con el proceso, ofreciendo una vía para explorar y buscar posibles agrupamientos naturales. Esta exploración no solo se limita a aspectos técnicos y comparativos de las imágenes, sino que también incluye la búsqueda de características distintivas a través de análisis estadístico descriptivo \cite{HandsonML, NEURIPS2021_6d9cb7de}.
+
+\section{Trabajo relacionado}
+
+En la última década, el desarrollo de técnicas de aprendizaje profundo ha permitido grandes avances en el campo de la visión por computadora, se han desarrollado numerosos modelos de aprendizaje profundo, como AlexNet, VGG, ResNet, Inception, etc. Estos modelos se entrenan con conjuntos de datos de gran tamaño, como ImageNet, que contiene más de 14 millones de imágenes etiquetadas \cite{HandsonML}. No obstante, existen otras áreas en las que el procesamiento de imágenes se aplica de una forma más sencilla y sin recurrir a modelos de inteligencia artificial para procesar imágenes, como los filtros de \textbf{Instagram} o \textbf{Snapchat}.
+
+\paragraph{Visión por computadora}
+
+El procesamiento de imágenes es esencial para tareas como reconocimiento de objetos, detección de rostros, segmentación de imágenes, seguimiento de objetos en movimiento, etc \cite{HandsonML}.
+
+\paragraph{Redes sociales}
+Las redes sociales como Instagram, Facebook, Snapchat, etc permiten a sus usuarios compartir imágenes. Estas aplicaciones permiten procesar imágenes, como aplicar filtros, antes de compartirlas.
+
+\section{Preprocesamiento de imágenes}
+El proceso incluyó la descarga del conjunto de imágenes que se encontraban en la plataforma \href{https://www.kaggle.com/datasets/olgabelitskaya/flower-color-images}{Kaggle}, la carga de las imágenes, la estandarización de las imágenes, la exploración de las imágenes y la aplicación de técnicas de agrupamiento.
+
+
+\subsection{Datos}
+
+El conjunto de datos base estaba conformado por 210 imágenes a color de flores pertenecientes a 10 especies diferentes, acompañadas de etiquetas que indicaban la especie a la que pertenecía cada imagen \cite{Kaggle}. Las imágenes se encontraban en formato \textbf{png} y, en su mayoría, tenían dimensiones \textit{128x128}. La Figura~\ref{fig:flowers_examples} muestra ejemplos de imágenes del conjunto de datos.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.7\textwidth]{flowers_examples}\rule[-0cm]{0cm}{0cm}
+  \caption{Ejemplos por clase.}
+  \label{fig:flowers_examples}
+\end{figure}
+
+\subsection{Estandarización}
+Aquellas imágenes que contaban con dimensiones distintas a \textit{128x128}, fueron redimensionadas esperadas mediante un recorte desde el centro de la imagen. Existen otros medios para redimensionar imágenes, pero se optó por el recorte debido a que las imágenes no suelen contener información relevante en los bordes.
+
+La Figura~\ref{fig:flowers_count} muestra el total de imágenes por clase. Se observa que la clase con mayor cantidad de imágenes es la de \textbf{peony}, mientras que la clase con menor cantidad de imágenes es la de \textbf{Goldquelle}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.4\textwidth]{flowers_count}\rule[-0cm]{0cm}{0cm}
+  \caption{Total imágenes por clase.}
+  \label{fig:flowers_count}
+\end{figure}
+
+
+\subsection{Transformación de imágenes}
+
+A lo largo del trabajo, se abordaron distintas etapas de preprocesamiento, manipulación y análisis de datos, con el objetivo de proporcionar un enfoque completo y efectivo para la detección de patrones naturales en este conjunto de imágenes.
+
+\subsubsection{Procesadores de imágenes}
+
+Las imágenes se representan como matrices de dimensiones \textbf{NxM}. Sin embargo, para poder manipularlas, era necesario convertirlas a un formato que pudiera ser procesado por los algoritmos. Para ello, se utilizaron las librerías \href{https://pillow.readthedocs.io/en/stable/}{PIL} (\textit{Python Imaging Library}), \href{https://numpy.org/}{Numpy} (\textit{Numerical Python}) y \href{https://opencv.org/}{OpenCV} (\textit{Open Source Computer Vision Library}). Dichas librerías permitían cargar las imágenes y convertirlas a un formato de \textbf{array} de \textbf{Numpy}, que podía ser manipulado con facilidad. La Figura~\ref{fig:flowers_processors} muestra un ejemplo de la conversión de una imagen a color a escala de grises.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.4\textwidth]{flowers_processors}
+  \caption{Procesadores.}
+  \label{fig:flowers_processors}
+\end{figure}
+
+De la Figura~\ref{fig:flowers_processors} se puede observar que independiente de la librería se puede obtener el mismo resultado. Sin embargo, la librería \textbf{OpenCV} permite obtener el resultado en una sola línea de código, mientras que las otras librerías más que eso.
+
+\subsubsection{Transformaciones}
+
+Se llevaron a cabo distintas transformaciones como parte del preprocesamiento de los datos. Estas transformaciones incluyeron cambios de color, cambios en la intensidad del color y aplicación de filtros. La Figura~\ref{fig:transformaciones} muestra ejemplos de las transformaciones que se llevaron a cabo.
+
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[H]{0.3\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{flowers_brightness}
+    \caption{Brillo.}
+    \label{fig:flowers_brightness}
+  \end{subfigure}
+  \begin{subfigure}[H]{0.3\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{flowers_mixed}
+      \caption{Superposición total/parcial.}
+      \label{fig:flowers_mixed}
+  \end{subfigure}
+  \begin{subfigure}[H]{0.3\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{flowers_filter}
+      \caption{Filtro.}
+  \end{subfigure}
+    \caption{Transformaciones.}
+    \label{fig:transformaciones}
+\end{figure}
+
+El recorte fue otra de las transformaciones que se llevaron. La Figura~\ref{fig:flowers_circle} muestra un ejemplo de esta transformación.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.4\textwidth]{flowers_circle}
+  \caption{Recortes.}
+  \label{fig:flowers_circle}
+\end{figure}
+
+Para llevar a cabo esta transformación se llevó a cabo la multiplicación de la matriz de la imagen por una matriz de ceros y unos. Dicha matriz se construyó de acuerdo al siguiente pseudocódigo, el cual dibuja un círculo de radio $R$ centrado en las coordenadas $(c_x, c_y)$:
+
+{
+\small
+\begin{align*}
+  &\mathbf{if} \;  (i-c_x)^2\; + \; (j-c_y)^2 \; < \; R^2 : \\
+  & \;\;\;\; mask[i,j]  = 1 \\
+  &\mathbf{else}: \\
+  & \;\;\;\;mask[i,j] = 0
+\end{align*}
+}
+
+\section{Análisis de imágenes}
+
+Se realizó un análisis descriptivo por cada canal (\textit{Rojo}, \textit{Verde} y \textit{Azul}) y por cada clase. Para ello, se calculó la media, de cada canal.
+
+\paragraph{Histogramas}
+
+La Figura~\ref{fig:label_color_distribution} muestra los histogramas de cada canal por clase. Se observa que los histogramas del canal \textit{Azul} se encuentra concentrado cerca a la intensidad de \textit{0} en todas las clases. Ahora bien, los histogramas del canal \textit{Verde} se encuentran similares entre las clases, esto puede deberse a que la mayoría de imágenes se encuentran rodeadas de verde, sean hojas y/o tallos. Por otro lado, los histogramas del canal \textit{Rojo} son distintos entre las clases, esto puede deberse a que las flores tienen distintos colores. En aquellas flores que tienen el color rojo predominante como \textbf{calendula}, \textbf{rose} o \textbf{peony} se aprecia que el histograma se encuentra concentrado cerca a la intensidad de \textit{255}.
+
+y \textit{Verde} son similares, mientras que el histograma del canal \textit{Azul} es distinto.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{label_color_distribution}
+  \caption{Distribución intensidad pixels por canal y clase.}
+  \label{fig:label_color_distribution}
+\end{figure}
+
+\paragraph{Medias}
+
+Para cada una de las clases, se calculó la media de cada canal. La Figura~\ref{fig:label_mean_flower} muestra la imagen promedio por clase, mientras que la Figura~\ref{fig:global_mean_flower} muestra la imagen promedio de todas las clases.
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[H]{0.79\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{label_mean_flower}
+      \caption{Imagen promedio por clase.}
+      \label{fig:label_mean_flower}
+  \end{subfigure}
+  \begin{subfigure}[H]{0.2\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{global_mean_flower}
+    \caption{Imagen promedio.}
+    \label{fig:global_mean_flower}
+  \end{subfigure}
+    \caption{Transformaciones.}
+    \label{fig:transformaciones}
+\end{figure}
+
+Se observa que la imagen promedio de las clases \textbf{phlox}, \textbf{calendula}, \textbf{rose}, \textbf{Goldquelle}, \textbf{Shasta daisy}, \textbf{campanula} y \textbf{peony} son similares, todas corresponden a un círculo con un color predominante. En consecuencia, la imagen promedio de todas las clases es similar a la combinación de las imágenes promedio de las clases en cuestión, hecho que coincide con que la mayoría de flores tienen una forma circular y se encuentran en el centro de la imagen. O bien, la imagen promedio corresponde a la combinación de las flores \textbf{phlox} y \textbf{calendula}. Por otro lado, las imágenes promedio de las clases \textbf{iris}, \textbf{viola} y \textbf{aquilegia} son distintas, esto puede deberse a que estas clases tienen flores con formas distintas a las de las otras clases.
+
+\section{Análisis de componentes principales}
+
+Se llevó a cabo un análisis de componentes principales (\textbf{PCA}, por sus siglas en inglés) para reducir la dimensionalidad de los datos y facilitar la visualización de sus atributos. Previo a este análisis, se estandarizaron los datos, es decir, se dividió cada valor entre \textit{255} y se restó \textit{0.5}. La Figura~\ref{fig:pca} muestra la proyección de los datos en el plano de los tres primeros componentes principales \cite{Jolliffe1986}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{pca}
+  \caption{Análisis de componentes principales.}
+  \label{fig:pca}
+\end{figure}
+
+De la Figura~\ref{fig:pca} se concluyó que no hay un patrón específico que permita agrupar las imágenes por clase.
+
+Por otro lado, se calculó la varianza explicada por cada componente principal. La Figura~\ref{fig:pca_exp_var} muestra la varianza explicada por cada componente principal.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.4\textwidth]{pca_exp_var}\rule[-0cm]{0cm}{0cm}
+  \caption{Varianza explicada.}
+  \label{fig:pca_exp_var}
+\end{figure}
+
+Finalmente, el Análisis de Componentes Principales permitió reducir la dimensionalidad de los datos de 49152 a 210, es decir, se redujo la dimensionalidad en un 99.57\%. Además un análisis como el de la varianza explicada permite determinar cuántos componentes principales son necesarios para explicar la mayor parte de la varianza de los datos. Para un trabajo futuro se propone comprimir las imágenes a través del análisis de varianza explicada, por ejemplo, tomar aquellos atributos que expliquen el 95\% de la varianza y comparar el rendimiento de un modelo de clasificación con los datos comprimidos y sin comprimir \cite{KagglePCA}.
+
+\medskip
+
+{
+\small
+\bibliographystyle{ieeetr}
+\bibliography{bibliography}
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\end{document}

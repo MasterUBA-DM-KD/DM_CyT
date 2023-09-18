@@ -1,0 +1,24 @@
+\begin{thebibliography}{1}
+
+\bibitem{HandsonML}
+A.~Geron, {\em Hands-on machine learning with Scikit-Learn and TensorFlow :
+  concepts, tools, and techniques to build intelligent systems}.
+\newblock Sebastopol, CA: O'Reilly Media, 2017.
+
+\bibitem{NEURIPS2021_6d9cb7de}
+R.~Liu, Z.~Wu, S.~Yu, and S.~Lin, ``The emergence of objectness: Learning
+  zero-shot segmentation from videos,'' in {\em Advances in Neural Information
+  Processing Systems} (M.~Ranzato, A.~Beygelzimer, Y.~Dauphin, P.~Liang, and
+  J.~W. Vaughan, eds.), vol.~34, pp.~13137--13152, Curran Associates, Inc.,
+  2021.
+
+\bibitem{Kaggle}
+O.~Belitskaya, ``Flower color images | kaggle,'' 2017.
+
+\bibitem{Jolliffe1986}
+I.~T. Jolliffe, ``Principal component analysis,'' p.~271, 1986.
+
+\bibitem{KagglePCA}
+S.~M, ``Image compression using pca | kaggle.''
+
+\end{thebibliography}
