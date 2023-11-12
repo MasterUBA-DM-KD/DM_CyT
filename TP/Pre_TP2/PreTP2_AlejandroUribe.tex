@@ -1,0 +1,343 @@
+\documentclass{article}
+
+
+% if you need to pass options to natbib, use, e.g.:
+\PassOptionsToPackage{numbers, compress}{natbib}
+% before loading neurips_2023
+
+
+% ready for submission
+% \usepackage{neurips_2023}
+
+
+% to compile a preprint version, e.g., for submission to arXiv, add add the
+% [preprint] option:
+% \usepackage[preprint]{neurips_2023}
+
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+\usepackage[final]{neurips_2023}
+
+
+% to avoid loading the natbib package, add option nonatbib:
+% \usepackage[nonatbib]{neurips_2023}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{xcolor}         % colors
+\usepackage{graphicx}
+\usepackage[font=footnotesize]{subcaption}
+\usepackage[font=footnotesize]{caption}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{adjustbox}
+
+
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.15}
+\renewcommand{\floatpagefraction}{0.8}
+\renewcommand{\textfraction}{0.1}
+\setlength{\floatsep}{5pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{5pt plus 2pt minus 2pt}
+\setlength{\intextsep}{5pt plus 2pt minus 2pt}
+\graphicspath{ {static} }
+\captionsetup[figure]{font=small,skip=0pt}
+\renewcommand*{\bibfont}{\footnotesize}
+
+\title{Exploración de la Conectividad Cerebral Durante el Sueño: Un Análisis Topológico de Redes Neuronales mediante Resonancia Magnética Funcional y Teoría de Grafos}
+
+\author{
+  Alejandro Uribe\\
+  Universidad de Buenos Aires\\
+  \texttt{jauriberamirez@gmail.com}
+}
+
+
+\begin{document}
+
+\maketitle
+
+
+\begin{abstract}
+Este proyecto se enfoca en analizar la topología de grafos en redes neuronales utilizando datos de resonancia magnética funcional (fMRI) recopilados durante diferentes fases del sueño. Inspirados por el trabajo previo de Tagliazucchi y colaboradores (2013), investigamos la relación entre cambios en la modularidad de las redes cerebrales y los distintos estados del sueño. Los objetivos abarcan la familiarización con la generación y manipulación de grafos, la visualización comparativa de diversas redes, el cálculo de parámetros fundamentales y la comparación con modelos de redes aleatorias, small world y scale-free. Los datos, organizados por sujeto y fase del sueño, se representan mediante matrices de correlaciones entre señales BOLD de 116 regiones cerebrales, utilizando el atlas Automatic Anatomical Labeling (AAL). El análisis tiene como objetivo ampliar la comprensión de la conectividad cerebral durante el sueño, proporcionando información valiosa para la salud y el bienestar.
+\end{abstract}
+
+\section{Introducción}\label{sec:introduccion}
+
+El análisis de la topología de grafos, una disciplina ampliamente aplicada en diversas áreas de investigación, se revela como un enfoque esencial para comprender las intrincadas interacciones que caracterizan a sistemas complejos, incluidas las redes neuronales.
+Este estudio se sumerge en el análisis de datos de resonancia magnética funcional (fMRI) con el objetivo de explorar las propiedades topológicas de las redes cerebrales en diferentes estados del sueño.
+La investigación se motiva en el trabajo pionero de Tagliazucchi y colaboradores en 2013\cite{Tagliazucchi:2013aa}, que buscó establecer vínculos entre los cambios en la modularidad de las redes cerebrales y los distintos estadios del sueño.
+Los objetivos del estudio incluyen la familiarización con la generación y manipulación de grafos, la visualización comparativa de diferentes representaciones de redes, y el cálculo de parámetros fundamentales de los grafos resultantes, contrastados con modelos de redes aleatorias, small world y scale-free.
+Se utilizan datos estructurados según el atlas Automatic Anatomical Labeling (AAL)\cite{Tzourio-Mazoyer:2002aa}, que define regiones cerebrales, y se busca arrojar luz sobre la organización y dinámica de las redes neuronales durante distintas fases del sueño, contribuyendo así al entendimiento más profundo de la maquinaria cerebral en un estado fundamental para la salud y el bienestar.
+
+\section{Trabajo relacionado}\label{sec:trabajo-relacionado}
+
+Los siguientes trabajos previos han contribuido significativamente al entendimiento de la conectividad cerebral y la teoría de grafos, sirviendo como puntos de referencia fundamentales para nuestro proyecto de análisis topológico de las redes neuronales en los estados del sueño.
+
+\paragraph{Large-scale brain functional modularity is reflected in slow electroencephalographic rhythms across the human non-rapid eye movement sleep cycle.}
+
+Este estudio sirvió como base para el presente proyecto, ya que este investigó la relación entre la modularidad de las redes cerebrales y los diferentes estadios del sueño\cite{Tagliazucchi:2013aa}.
+
+\paragraph{Complex brain networks: graph theoretical analysis of structural and functional systems.}
+
+Este trabajo proporciona una visión general de la teoría de grafos aplicada a sistemas complejos, proporciona un fundamento teórico como un enfoque analítico\cite{Bullmore:2009aa}.
+
+\paragraph{Network hubs in the human brain.}
+
+Este artículo explora la importancia de los \("\)hubs\("\) o centros de conectividad en las redes cerebrales humanas, que permite la comprensión de los patrones de conectividad que los investigadores esperan identificar\cite{Heuvel:2013aa}.
+
+
+\section{Preprocesamiento del grafo}\label{sec:preprocesamiento-del-grafo}
+
+El proceso incluyó la descarga del conjunto de datos de los sujetos estudiados y de los datos del Automatic Anatomical Labeling (AAL)\cite{Tzourio-Mazoyer:2002aa} posteriormente se realizó la extracción de los datos de interés, que corresponden a las señales BOLD entre las 116 regiones cerebrales, y la generación de los grafos correspondientes para el sujeto de interés.
+
+\subsection{Datos}\label{subsec:datos}
+
+El conjunto de datos base estaba conformado por 18 sujetos y 4 estadios del sueño, para un total de 72 archivos.
+Los estadios del sueño corresponden a \textit{despierto} (W), \textit{sueño ligero} (N1), \textit{sueño profundo} (N2) y \textit{sueño de movimientos oculares rápidos} (N3).
+El archivo del sujeto de interés se procesó con \textit{Python} y corresponde a un \textit{dataframe} de dimensiones $116x116$, cada conexión entre fila y columna corresponde a las señales BOLD de las regiones cerebrales correspondientes.
+
+\subsection{Preprocesamiento}\label{subsec:preprocesamiento}
+
+Una vez cargado el grafo para el estadio \textit{despierto} (W) para el sujeto de interés se procedió a realizar el preprocesamiento del grafo, que incluyó la reducción de la densidad de enlaces de la matriz de adyacencia para reducir la carga computacional y facilitar la interpretación visual.
+En este caso se redujo la densidad de enlaces a $\delta = 0.08$, para ello se definió un umbral de correlación $u=0.779$.
+La Figura~\ref{fig:binarizacion} muestra las matrices de correlación antes y después del preprocesamiento.
+
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[H]{0.25\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{adjacency_matrix_weighted}
+    \caption{Matriz de adyacencia pesada}
+    \label{fig:adjacency_matrix_weighted}
+  \end{subfigure}
+  \begin{subfigure}[H]{0.25\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{adjacency_matrix_binary}
+      \caption{Matriz de adyacencia binaria}
+      \label{fig:adjacency_matrix_binary}
+  \end{subfigure}
+  \caption{Binarización}
+  \label{fig:binarizacion}
+\end{figure}
+
+Con la matriz de adyacencia binaria se generó el grafo correspondiente.
+El cual se muestra en la Figura~\ref{fig:grafo}.
+
+\subsection{Transformación del grafo}\label{subsec:transformacion-del-grafo}
+
+La reducción de densidad del grafo que se mencionó desconectó ciertos nodos del grafo, por lo que se tomó la componente gigante del grafo inicial para continuar con el análisis.
+El actual grafo cuenta con $20$ componentes conectadas.
+Se muestran las primeras tres componentes gigantes presentes tras reducir la densidad en la Figura~\ref{fig:connected_components}.
+
+
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[H]{0.2\textwidth}
+      \centering
+      \includegraphics[width=0.95\textwidth]{graph}
+      \caption{Grafo inicial}
+      \label{fig:grafo}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}[H]{0.2\textwidth}
+      \centering
+      \includegraphics[width=0.95\textwidth]{first_component}
+      \caption{Primera componente}
+      \label{fig:first_component}
+  \end{subfigure}
+    \begin{subfigure}[H]{0.2\textwidth}
+      \centering
+      \includegraphics[width=0.95\textwidth]{second_component}
+      \caption{Segunda componente}
+      \label{fig:second_component}
+  \end{subfigure}
+  \begin{subfigure}[H]{0.2\textwidth}
+      \centering
+      \includegraphics[width=0.95\textwidth]{third_component}
+      \caption{Tercera componente}
+    \label{fig:third_component}
+  \end{subfigure}
+    \caption{Subgrafos conectados - Componentes gigantes}
+    \label{fig:connected_components}
+\end{figure}
+
+De la Figura~\ref{fig:connected_components} no se observa una gran diferencia entre el grafo original en la Figura~\ref{fig:grafo} y la primera componente gigante en la Figura~\ref{fig:first_component}.
+En cambio, y las demás componentes, en las Figuras~\ref{fig:second_component}, ~\ref{fig:third_component}, se muestran mucho más desconectadas y con un número de nodos mucho menor.
+
+\subsubsection{Propiedades del grafo}\label{subsubsec:metricas-del-grafo}
+
+De un grafo se pueden obtener distintas propiedades que permiten caracterizarlo.
+En este caso se obtuvieron las siguientes métricas:
+\begin{itemize}
+  \item Grado $k$: número de conexiones de un nodo.
+  \item Distancia $d$: distancia entre dos nodos.
+  \item Diámetro $D$: distancia máxima entre dos nodos.
+  \item Eficiencia $eff$: inverso de la distancia.
+  \item Coeficiente de agrupamiento $C$: número de conexiones entre los vecinos de un nodo.
+\end{itemize}
+
+Los resultados se muestran en la Tabla~\ref{tab:coeficientes}.
+
+\begin{table}[h!]
+\begin{center}
+\begin{tabular}{| c | c | c |}
+  \hline
+Coeficiente & Identificador & Valor \\ \hline
+Diámetro & $D$ & $11$ \\
+Distancia media & $<d>$ & $1.92$ \\
+Eficiencia global & $eff$ & $0.38$\\
+Grado mínimo & $k_{min}$ & $1$\\
+Grado medio & $<k>$ & $11.48$\\
+Grado máximo & $k_{max}$ & $30$\\
+Coeficiente de agrupamiento & $<C>$ & $0.53$\\ \hline
+\end{tabular}
+\caption{Coeficientes del grafo}
+\label{tab:coeficientes}
+\end{center}
+\end{table}
+
+El coeficiente de agrupamiento es un indicador de la tendencia de los nodos a formar grupos.
+En este caso el coeficiente de agrupamiento es de $0.53$, lo cual indica que hay grupos de nodos que están relativamente bien interconectados, pero la conectividad no es tan densa como en un grafo completamente agrupado.
+La Figura~\ref{fig:coeficiente_agrupamiento} muestra el coeficiente de agrupamiento para cada nodo.
+
+
+\begin{figure}[h!]
+    \centering
+      \includegraphics[width=0.3\textwidth]{clustering}
+      \caption{Clústering}
+  \label{fig:coeficiente_agrupamiento}
+\end{figure}
+
+
+Por otro lado, $<k> = 11.48$ sugiere que, en promedio, cada nodo está conectado con alrededor de 11 otros nodos en la red.
+Esto indica una conectividad relativamente alta en comparación con grafos menos densos.
+
+La Figura~\ref{fig:grado} muestra el grado de cada nodo.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.3\textwidth]{degree_dist_connected}
+  \caption{Distribución grado}
+  \label{fig:grado}
+\end{figure}
+
+Se aprecia que la mayoría de nodos tienen un grado bajo, mientras que unos pocos tienen un grado mayor al promedio.
+Hecho que tiene sentido, ya que en la Figura~\ref{fig:grafo} se observa que hay nodos que están más conectados que otros.
+Además, en términos vitales es más probable que haya sectores en el cerebro por los cuales fluya información hacia otras regiones, como si sirvieran de puente entre nodos.
+
+\subsubsection{Poisson, Small World y Scale Free}\label{subsubsec:poisson-small-world-y-scale-free}
+
+A fin de comparar el grafo inicial con grafos Poisson, small world y scale free se construyeron estos últimos con el mismo número de conexiones y nodos que el grafo inicial.
+La Figura~\ref{fig:prototipos} muestra los prototipos de redes.
+
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[H]{0.2\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{poissonian_graph}
+    \caption{Poisson}
+    \label{fig:poisson}
+  \end{subfigure}
+  \begin{subfigure}[H]{0.2\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{small_world}
+      \caption{Small World}
+      \label{fig:small_world}
+  \end{subfigure}
+  \begin{subfigure}[H]{0.2\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{scale_free}
+      \caption{Scale Free}
+    \label{fig:scale_free}
+  \end{subfigure}
+    \caption{Prototipos de redes}
+    \label{fig:prototipos}
+\end{figure}
+
+En la Figura~\ref{fig:poisson} se observa que el grafo Poisson es un grafo completamente aleatorio, donde todos los nodos tienen un grado similar.
+También se observa que hay nodos que no están conectados a ningún otro nodo, lo cual es un comportamiento esperado en un grafo aleatorio.
+
+Por otro lado, en la Figura~\ref{fig:small_world} se observa que el grafo small world es un grafo con una mayor densidad de conexiones que el Poisson, pero con una distancia media relativamente baja.
+Esto se debe a que el grafo small world se construye a partir de un grafo regular, donde cada nodo tiene un grado similar, pero se agregan conexiones aleatorias entre nodos.
+Esto hace que la distancia media sea baja, ya que hay conexiones entre nodos que están relativamente lejos entre sí.
+Este grafo es similar al grafo inicial, porque ambos tienen una distancia media baja y una densidad de conexiones relativamente alta.
+
+Finalmente, en la Figura~\ref{fig:scale_free} se observa que el grafo scale free es un grafo con una densidad de conexiones alta, con una distancia media mucho mayor.
+Esto se debe a que el grafo scale free se construye a partir de un grafo aleatorio, donde se agregan conexiones a nodos que ya tienen un grado alto.
+Esto hace que la distancia media sea alta, ya que hay conexiones entre nodos que están relativamente lejos entre sí.
+
+\subsubsection{Comparación de grafos}\label{subsubsec:comparacion-de-grafos}
+
+Para comparar los grafos se utilizaron los coeficientes de la Tabla~\ref{tab:coeficientes}.
+Las Figuras~\ref{fig:k_mean_reps}, ~\ref{fig:k_max_reps}, ~\ref{fig:ci_reps}, ~\ref{fig:eff_n_reps} muestran la distribución de los coeficientes de los grafos.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{all_graphs_dist_k_mean}
+    \caption{K medio}
+    \label{fig:k_mean_reps}
+\end{figure}
+
+En la Figura~\ref{fig:k_mean_reps} se observa que el grafo Poisson y el grafo Scale Free tienen distribuciones en un intervalo similar, mientras que el grafo Small World tiene grados más bajos y mayormente concentrados en un valor específico $~5$.
+El grafo inicial tiene una distribución similar al grafo Scale Free, pero con valores más altos.
+
+\begin{figure}[h!]
+      \centering
+      \includegraphics[width=0.7\textwidth]{all_graphs_dist_k_max}
+      \caption{K máximo}
+      \label{fig:k_max_reps}
+\end{figure}
+
+En la Figura~\ref{fig:k_max_reps} se observa que el grafo Poisson tiene un grado máximo mucho menor que los otros grafos, mientras que el grafo Scale Free tiene un grado máximo mayor que los otros grafos.
+
+\begin{figure}[h!]
+      \centering
+      \includegraphics[width=0.7\textwidth]{all_graphs_dist_ci_mean}
+      \caption{Coeficiente de agrupamiento}
+    \label{fig:ci_reps}
+\end{figure}
+
+En la Figura~\ref{fig:ci_reps} se observa que el grafo Poisson tiene un coeficiente de agrupamiento mucho menor que los otros grafos.
+El grafo Small World tiene un coeficiente de agrupamiento concentrado en valores intermedios, mientras que el grafo Scale Free tiene un coeficiente de agrupamiento mayor que los otros grafos.
+Esto indica que el grafo Poisson es un grafo poco agrupado, mientras que el grafo Scale Free es un grafo muy agrupado.
+
+\begin{figure}[h!]
+      \centering
+      \includegraphics[width=0.7\textwidth]{all_graphs_dist_eff}
+      \caption{Eficiencia}
+    \label{fig:eff_n_reps}
+\end{figure}
+
+En la Figura~\ref{fig:eff_n_reps} se observa que el grafo Poisson tiene una eficiencia mucho menor que los otros grafos.
+El grafo Small World tiene una eficiencia concentrada en valores intermedios, mientras que el grafo Scale Free tiene una eficiencia mayor que los otros grafos.
+En otras palabras, si se consider a la eficiencia global como la capacidad de un grafo para transmitir información, el grafo Poisson es el menos eficiente, mientras que el grafo Scale Free es el más eficiente.
+En un grafo con baja eficiencia global, la información se transmite de manera más lenta, ya que debe tomar un camino más largo para llegar a otro nodo.
+
+En las Figuras~\ref{fig:k_mean_reps}, ~\ref{fig:k_max_reps}, ~\ref{fig:ci_reps}, ~\ref{fig:eff_n_reps} se observa que el grafo Poisson y el grafo scale free tienen distribuciones opuestas, siendo el Poisson aquel con menores valores para sus coeficientes.
+O bien, los grafos Poisson tienden a estar sesgados a la derecha mientras que los grafos Scale Free tienden a estar sesgados a la izquierda.
+Por otro lado, el grafo Small World y el grafo inicial tienen distribuciones similares, con valores intermedios para sus coeficientes.
+Esto indica que el grafo inicial es un grafo intermedio entre el grafo Poisson y el grafo Scale Free.
+
+\medskip
+
+{
+\small
+\bibliographystyle{ieeetr}
+\bibliography{bibliography}
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\end{document}
