@@ -1,0 +1,439 @@
+\documentclass{article}
+
+
+% if you need to pass options to natbib, use, e.g.:
+    \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading neurips_2023
+
+
+% ready for submission
+% \usepackage{neurips_2023}
+
+
+% to compile a preprint version, e.g., for submission to arXiv, add add the
+% [preprint] option:
+%     \usepackage[preprint]{neurips_2023}
+
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+\usepackage[final]{neurips_2023}
+
+
+% to avoid loading the natbib package, add option nonatbib:
+%    \usepackage[nonatbib]{neurips_2023}
+
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{xcolor}         % colors
+\usepackage{graphicx}
+\usepackage{floatrow}
+\usepackage{subfig}
+\usepackage[spanish]{babel}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.15}
+\renewcommand{\floatpagefraction}{0.8}
+\renewcommand{\textfraction}{0.1}
+\setlength{\floatsep}{5pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{5pt plus 2pt minus 2pt}
+\setlength{\intextsep}{5pt plus 2pt minus 2pt}
+\graphicspath{ {static} }
+\vspace{-5truemm}
+\renewcommand*{\bibfont}{\footnotesize}
+
+\title{Exploración de la Dinámica de Redes Cerebrales durante los Estadios del Sueño}
+
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to LaTeX to determine where to break the
+% lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
+% authors names on the first line, and the last on the second line, try using
+% \AND instead of \And before the third author name.
+
+
+\author{
+    Clas Giulia\\
+    Maestría en DM \& KD\\
+    Universidad de Buenos Aires\\
+    Buenos Aires\\
+    \texttt{clas.giulia.s@gmail.com} \\
+    \And
+    Massara Lautaro\\
+    Maestría en DM \& KD\\
+    Universidad de Buenos Aires\\
+    Buenos Aires\\
+    \texttt{malautaro@gmail.com} \\
+    \And
+    Uribe Alejandro \\
+    Maestría en DM \& KD\\
+    Universidad de Buenos Aires\\
+    Buenos Aires\\
+    \texttt{jauriberamirez@gmail.com}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+El cerebro y su funcionamiento es unos de los misterios que múltiples campos de estudio tratan de develar. En el presente trabajo se busca replicar el procedimiento realizado por Enzo Tagliazucchi \cite{Tagliazucchi:2013aa} y su equipo con el objetivo de entender como utilizar diferentes herramientas de grafos y lograr un mayor conocimiento en como se comporta el cerebro mediante la información obtenida por la resonancia magnética funcional (fMRI). Con dieciocho sujetos de prueba, se busca indagar el comportamiento generalizado de los individuos.
+\end{abstract}
+
+
+\section{Introducción}
+
+La organización del cerebro humano sano y despierto se caracteriza por arquitecturas funcionales no aleatorias que muestran estructuras de tipo small-world y scale-free reveladas mediante imágenes de resonancia magnética funcional (fMRI). Estas redes resistentes a daños localizados y eficientes en el procesamiento de información a gran escala, exhiben una estructura modular con conjuntos densamente conectados que, a su vez, se encuentran escasamente conectados entre sí.
+
+La aplicación del análisis de redes en general, y del análisis de grafos en particular, en registros de actividad cerebral humana es un campo en constante evolución \cite{Rubinov:2010aa, Pachon_2016}. Estudios previos han investigado cómo esta arquitectura modular cambia con la pérdida progresiva de vigilancia durante el descenso al sueño profundo y la relación entre los ritmos electroencefalográficos lentos resultantes y la modularidad de la red a gran escala, medida con resonancia magnética funcional  (fMRI) \cite{Tagliazucchi:2013aa}. La intersección de la conectividad cerebral y la dinámica del sueño ha suscitado un interés considerable, y este proyecto se suma a la investigación existente al enfocarse en cómo la modulación de la red cerebral se vincula con distintos estadios del sueño.
+
+El objetivo de este proyecto es explorar los cambios en la red cerebral en función de la profundidad del sueño, centrándose en los cambios asociados a la modularidad de la red. A su vez se buscará identificar los nodos en los cuales estos cambios se producen.
+
+\section{Materiales y métodos}
+\label{gen_inst}
+
+Este estudio se basó en el conjunto de datos proveniente de un trabajo de Tagliazucchi y colaboradores \cite{Tagliazucchi:2013aa}. El subset de datos cuenta con un total de 18 sujetos saludables quienes atravesaron un electroencefalograma (EEG) y una resonancia magnética funcional (fMRI) en simultáneo por la tarde luego de seguir un horario regular de sueño. Para cada sujeto se tienen cuatro condiciones distintas, una correspondiente a vigilia (``W'') y tres a diferentes estadios del sueño no REM (sueño leve ``N1'', intermedio ``N2'' y profundo ``N3''). Los estadios de sueño explorados no incluyen sueño REM (\textit{rapid\ eye\ movements}) y fueron determinados manualmente por un experto según el criterio de la \textit{American Academy of Sleep Medicine (AASM)}\cite{Berry:2015aa}.
+
+El análisis en este proyecto se llevó a cabo utilizando el lenguaje de programación Python y la biblioteca NetworkX\cite{SciPyProceedings_11}. NetworkX es una herramienta poderosa y versátil para el análisis de redes complejas, proporcionando funciones y algoritmos que facilitan la manipulación y visualización de grafos.
+
+\section{Resultados y discusión}
+\label{headings}
+
+\subsection{Visualización de los datos}
+
+Para cada estadío del sueño (W y N1, N2, N3) se determinó el promedio entre los 18 sujetos experimentales por región cerebral. Seguido de esto se investigó la variación en función de la densidad de enlaces ($\delta$) de la proporción de nodos participantes de la componente gigante respecto a la cantidad de nodos totales. Como se muestra en la figura 1, el tamaño de la componente gigante incrementa en función del valor de densidad fijado como producto de un aumento en la cantidad de enlaces de toda la red.
+
+La figura \ref{fig:variacion_delta} muestra que la proporción de la componente gigante crece asintóticamente hasta que la red se acerca a estar formada por un único componente. Este comportamiento se observa a grandes rasgos en los 4 estadíos estudiados aunque con diferencias entre ellos. En particular se observa un aumento abrupto en el tamaño de la componente gigante para el estadío de sueño profundo N3.
+
+\begin{figure}[H]
+    \centering
+    {\includegraphics[width=0.6\textwidth]{img/1.1.png}}
+    \caption[]{Variación del tamaño de la componente gigante\footnotemark en función del parámetro $\delta$.}
+    \label{fig:variacion_delta}
+\end{figure}
+\footnotetext{Proporción de nodos que participan en la componente gigante respecto a los nodos totales.}
+
+En la figura \ref{densidades_enlace} se muestran los grafos correspondientes a los valores de $\delta$ antes (figura \ref{densidades_enlace_3}) y después (figura \ref{densidades_enlace_4}) del aumento abrupto en el tamaño de la componente gigante que se visualiza en la figura \ref{fig:variacion_delta}. Se puede observar como aumenta el tamaño de la componente gigante. La componente gigante presenta un incremento del 50\% con un cambio del 1\% la densidad de enlaces.
+
+\begin{figure}[H]
+    \centering
+    \subfloat[Densidad de enlace 3\%]{\includegraphics[width=0.41\textwidth]{img/1.2.3.s.barra.png}\label{densidades_enlace_3}}
+    \hfill
+    \subfloat[Densidad de enlace 4\%]{\includegraphics[width=0.45\textwidth]{img/1.2.4.png}\label{densidades_enlace_4}}
+    \hfill
+    \caption[]{Grafos con superposición anatómica cerebral para el estadío de sueño N3\footnotemark}
+    \label{densidades_enlace}
+\end{figure}
+\footnotetext{El valor porcentual se corresponde con el porcentaje enlaces presentes en el grafo respecto al total potencial de enlaces.}
+
+Además de aumentar el tamaño de la componente gigante también se observa un incremento en la eficiencia global del grafo en función de la densidad de enlaces en la figura \ref{fig:k_clust_eff_delta}. La eficiencia global se calcula como el promedio de la inversa de las distancias entre todos los pares de nodos de la red, es decir, una red con alta eficiencia global tendrá caminos cortos entre sus nodos. Esto se condice con lo esperado puesto a que una mayor densidad de enlaces puede implicar que las distancias entre nodos disminuyan. Por el mismo motivo aumenta el coeficiente de clustering de la red, que es una medida de densidad de la misma. A su vez aumenta de manera proporcional a la densidad el grado medio del grafo.
+
+\begin{figure}[H]
+    \centering
+    {\includegraphics[width=0.9\textwidth]{img/1.3.png}}
+    \caption{Representación del grado medio, coeficiente de clustering medio y eficiencia global con el error estándar de la media correspondiente en función de del parámetro $\delta$ para cada estadío del sueño.}
+    \label{fig:k_clust_eff_delta}
+\end{figure}
+
+Para la figura \ref{condiciones_w_n1_n2_n3} se generaron grafos para cada condición del sueño fijando el parámetro $\delta=0.12$, en los cuales se evidenció por color y tamaño el valor de centralidad de autovector de cada nodo (una medida de cuán centrales son los primeros vecinos del nodo en cuestión). Se puede ver como los nodos de mayor centralidad de autovector cambian entre estadíos, particularmente en N2 (figura \ref{n2}) y N3 (\ref{n3}) respecto a W (figura \ref{wake}) y N1 (\ref{n1}), encontrándose asociados a zonas cerebrales distintas.
+
+\begin{figure}[H]
+    \centering
+    \subfloat[Condición Wake]{\includegraphics[width=0.45\textwidth]{img/W.png}
+    \label{wake}}
+    \hfill
+    \subfloat[Condición N1]{\includegraphics[width=0.45\textwidth]{img/N1.png}
+    \label{n1}}
+    \hfill
+    \subfloat[Condición N2]{\includegraphics[width=0.45\textwidth]{img/N2.png}
+    \label{n2}}
+    \hfill
+    \subfloat[Condición N3]{\includegraphics[width=0.45\textwidth]{img/N3.png}
+    \label{n3}}
+    \hfill
+    \caption[]{Grafos de $\delta$=0.12 con superposición anatómica para cada estadío del sueño (W, N1, N2 y N3).\footnotemark }
+    \label{condiciones_w_n1_n2_n3}
+\end{figure}
+\footnotetext{El color de cada nodo representa su centralidad de autovector ${c}_{i}^{eigen}$, mientras que su tamaño varía con $\alpha{c}_{i}^{eigen}$, siendo $\alpha$=1000.}
+
+\subsection{Comunidades y coeficiente de modularidad}
+
+La modularidad de la red para cada estadío del sueño en función de la densidad de enlaces también fue analizada en este trabajo. Para esto se realizó una curva que describe el coeficiente de modularidad (Q) en función de $\delta$ utilizando el promedio de sujetos para cada estadío. Las curvas obtenidas fueron comparadas contra "modelos nulos" utilizando grafos $\it random$ equivalentes a los estudiados en cuanto a densidad de enlaces y cantidad total de nodos (ver figura 5).
+
+
+A grandes rasgos puede verse en la figura \ref{fig:q_w_n1_n2_n3} como a medida que aumenta la densidad de enlaces se produce una disminución en el coeficiente de modularidad. Así mismo, en todos los estadíos de sueño se ven valores de Q más elevados respecto a los obtenidos a partir del grafo $\it random$.
+
+En cuanto a las comparaciones entre estadíos del sueño N1 (figura \ref{q_w_vs_n1}), N2 (figura \ref{q_w_vs_n2}) y N3 (figura \ref{q_w_vs_n3}) respecto a W, las curvas mostraron tendencias similares. Más aún, sólo se observó significancia estadística a valores bajos de densidad de enlace entre los estadíos N2 y W. Esto último no se condice con el trabajo de Tagliazucchi \cite{Tagliazucchi:2013aa}, en donde se demuestra significancia estadística en la diferencia entre N3 y W, además de N2 y W. Esto puede deberse al hecho de estar trabajando con un subconjunto de datos reducido del trabajo original.
+
+A la vez se estudió el número de comunidades para cada estadío en función de $\delta$ (figura \ref{fig:comunidad_delta}). En este caso se observó significancia estadística para la diferencia entre W y N3 (figura \ref{c_w_vs_n3}) además de W y N2 (figura \ref{c_w_vs_n2}). Las tendencias en las curvas para este análisis fueron similares a las observadas en la figura \ref{q_w_vs_n1}.
+
+\begin{figure}[H]
+    \centering
+    \subfloat[W vs N1]{\includegraphics[width=0.42\textwidth]{img/wvsn1.png}\label{q_w_vs_n1}}
+    \hfill
+    \subfloat[W vs N2]{\includegraphics[width=0.42\textwidth]{img/wvsn2.png}\label{q_w_vs_n2}}
+    \hfill
+    \subfloat[W vs N3]{\includegraphics[width=0.42\textwidth]{img/wvsn3.png}\label{q_w_vs_n3}}
+    \hfill
+    \caption[]{Comparación de los datos del estado despierto W en conjunto con cada estadío N1, N2 y N3 para el coeficiente de modularidad (Q) en función del parámetro $\delta$. \footnotemark }
+    \label{fig:q_w_n1_n2_n3}
+\end{figure}
+\footnotetext{Se grafica además el error estándar de la media. La significancia estadística de la prueba t de Student para comparar los estados N1, N2 y N3 contra W se ve representada por asteriscos.}
+
+\begin{figure}[H]
+    \centering
+    \subfloat[W vs N1]{\includegraphics[width=0.42\textwidth]{img/ncwn1.png}\label{c_w_vs_n1}}
+    \hfill
+    \subfloat[W vs N2]{\includegraphics[width=0.42\textwidth]{img/ncwn2.png}\label{c_w_vs_n2}}
+    \hfill
+    \subfloat[W vs N3]{\includegraphics[width=0.42\textwidth]{img/ncwn3.png}\label{c_w_vs_n3}}
+    \hfill
+    \caption[]{Comparación de los datos del estado despierto W en conjunto con cada estadío N1, N2 y N3 para el análisis número de comunidades en función del parámetro $\delta$. \footnotemark }
+    \label{fig:comunidad_delta}
+\end{figure}
+\footnotetext{La significancia estadística de la prueba t de Student para comparar los estados N1, N2 y N3 contra W se ve representada por asteriscos.}
+
+Por su parte, tal como se muestra en la figura \ref{fig:superp_w_n1_n2_n3}, tras realizar la partición partición de módulos via Louvain se elaboraron grafos que muestran los distintos módulos según la condición de sueño por color. Se puede observar como hay ciertos módulos que se mantienen establecidos entre condiciones mientras que otros sufren variaciones a simple vista.
+
+\begin{figure}[H]
+    \centering
+    \subfloat[Condición Wake]
+    {\includegraphics[width=0.45\textwidth]{img/wcomunidades.png}\label{superp_w}}
+    \hfill
+    \subfloat[Condición N1]
+    {\includegraphics[width=0.45\textwidth]{img/n1comunidades.png}\label{superp_n1}}
+    \hfill
+    \subfloat[Condición N2]
+    {\includegraphics[width=0.45\textwidth]{img/n2comunidades.png}\label{superp_n2}}
+    \hfill
+    \subfloat[Condición N3]
+    {\includegraphics[width=0.45\textwidth]{img/n3comunidades.png}\label{superp_n3}}
+    \hfill
+    \caption[]{Grafos de $\delta=0.12$ con superposición anatómica para cada estadío del sueño (W, N1, N2 y N3). \footnotemark }
+    \label{fig:superp_w_n1_n2_n3}
+\end{figure}
+\footnotetext{Los nodos de encuentran coloreados de acuerdo a la pertenencia en las comunidades detectadas.}
+
+En lo que respecta la detección de comunidades en redes existen varios algoritmos disponibles que permiten llevar a cabo esta tarea. Entre ellos se encuentran tanto el algoritmo de Louvain \cite{Traag_2019} como el de Girvan-Newman \cite{Newman_2004}. Brevemente, el primero de estos algoritmos se centra en la optimización de la modularidad de la red mientras que el segundo se basa en un enfoque jerárquico para la detección de comunidades.
+
+Las figuras \ref{fig:q_vs_delta} y \ref{fig:detect_comun} se muestra un análisis comparativo de los algoritmos en cuestión. En la figura \ref{fig:q_vs_delta} se puede observar que existen diferencias significativas en la modularidad calculada entre ambos métodos en todos los estadíos de sueño.
+
+\begin{figure}[H]
+    \centering
+    \subfloat[Condición Wake]{\includegraphics[width=0.45\textwidth]{img/wln.png}\label{w_louvain_newman}}
+    \hfill
+    \subfloat[Condición N1]{\includegraphics[width=0.45\textwidth]{img/n1ln.png}\label{n1_louvain_newman}}
+    \hfill
+    \subfloat[Condición N2]{\includegraphics[width=0.45\textwidth]{img/n2ln.png}\label{n2_louvain_newman}}
+    \hfill
+    \subfloat[Condición N3]{\includegraphics[width=0.45\textwidth]{img/n3ln.png}\label{n3_louvain_newman}}
+    \hfill
+    \caption[]{Comparación de métodos de detección de comunidades para el análisis del coeficiente de modularidad (Q) en función del parámetro $\delta$. \footnotemark}
+    \label{fig:q_vs_delta}
+\end{figure}
+\footnotetext{La significancia estadística de la prueba t de Student para comparar ambos métodos se ve representada por asteríscos.}
+
+Para los test anteriores se utilizó el t de student para evaluar las diferencias entre los diferentes puntos. La evaluación realizada fue, suponiendo un desvío similar entre los grupos, se realizó la prueba de Levene para evaluar si había diferencia significativa entre las varianzas y luego se utilizó el t de student. La evaluación para la hipótesis nula es que los dos muestreos independientes (que si entramos en detalles, no son realmente independientes provienen de el calculo basado en los mismos sujetos) tienen la misma media esperada. Realizar una corrección por comparación múltiple le proporciona robustez al trabajo. Es una estrategia recomendable en particular para los primeros puntos en lo que se comienza a rechazar la hipótesis nula, por ejemplo, densidad 5, para W, el valor es cercano y los valores entre distribuciones pueden solaparse. En cambio, para diferencias más grandes no es necesario. Se podría realizar una comparación grafica y realizar las agrupaciones correspondientes para los individuos. Para ello el análisis debe estar basado en los valores obtenidos por individuo y no por grupo.
+
+Por otro lado, en la figura \ref{fig:detect_comun} se muestra la comparación del cálculo de comunidades. En lo que respecta a los resultados de este cálculo, únicamente se vio significancia estadística para algunas densidades de enlaces para los estadíos N1, N2 y N3.
+
+\begin{figure}[H]
+    \centering
+    \subfloat[Condición Wake]{\includegraphics[width=0.45\textwidth]{img/wnsln.png}}
+    \hfill
+    \subfloat[Condición N1]{\includegraphics[width=0.45\textwidth]{img/n1ncln.png}}
+    \hfill
+    \subfloat[Condición N2]{\includegraphics[width=0.45\textwidth]{img/n2ncln.png}}
+    \hfill
+    \subfloat[Condición N3]{\includegraphics[width=0.45\textwidth]{img/n3ncln.png}}
+    \hfill
+    \caption[]{Comparación de métodos de detección de comunidades para el análisis del número de comunidades en función del parámetro $\delta$. \footnotemark}
+    \label{fig:detect_comun}
+\end{figure}
+\footnotetext{La significancia estadística de la prueba t de Student para comparar ambos métodos se ve representada por asteríscos.}
+
+\subsection{Diferencias en las comunidades para los diferentes estadíos}
+
+Se siguió el procedimiento propuesto por \textit{Alexander-Bloch} \cite{Alexander-Bloch:2012aa} y colaboradores para evaluar las diferencias significativas globales en las particiones de comunidades entre diferentes estados del sueño y el estado de vigilia.
+
+\paragraph{Cálculo de Índices de Rand Ajustados:} Este índice mide la similitud entre las particiones de comunidades de los pares de sujetos, considerando la posibilidad de coincidencias aleatorias. Este ínidice se calculó para todos los estadíos del sueño y para el estado de vigilia.
+
+\paragraph{Promedio de Índices de Rand Ajustados:} Se promedió los valores obtenidos en el paso anterior. Este promedio, denominado Índice de Rand Ajustado "within-group" observado ($RI_0$), representa la similitud promedio de las particiones de comunidades dentro de cada grupo (sueño y vigilia).
+
+\paragraph{Permutación de Etiquetas y Cálculo de Índices de Rand Ajustados Permutados:} Se realizan permutaciones aleatorias de las etiquetas de los pares NX-W, manteniendo a todos los sujetos en cada grupo pero intercambiando las etiquetas de sus particiones de comunidades. Se repiten los pasos 1-2 en cada iteración de permutación para obtener un conjunto de Índices de Rand Ajustados ``within-group'' permutados ($RI_p$).
+
+\paragraph{Cálculo del P-Valor:} El \textit{p-valor} se calcula como la proporción de permutaciones que dieron un Índice de Rand Ajustado "within-group" permutado ($RI_p$) mayor que el Índice de Rand Ajustado ``within-group'' observado ($RI_o$). Esto proporciona una medida de la probabilidad de obtener un valor de similitud entre particiones tan alto como el observado por azar.
+
+\paragraph{Umbral de Significancia y Marcado de Resultados Significativos:} Se establece un umbral de significancia y se compara con el \textit{p-valor} calculado. Si el \textit{p-valor} es inferior al umbral, se considera que la comparación es significativa, y se marca con un asterisco para indicar la significancia estadística.
+
+La figura \ref{fig:RI_Alexander} muestra los resultados obtenidos. Inicialmente el valor de \textit{RI} se encuentra cercano a $RI=0.5$, es decir, aunque hay algunas comunidades compartidas, también hay cambios o reorganizaciones en la estructura modular del cerebro. Por otro lado, las comunidades se comienzan a diferenciar conforme aumenta la densidad, es decir el valor de \textit{RI} tiende a cero, hecho que indica que la organización modular del cerebro varia conforme.
+
+\begin{figure}[H]
+    \centering
+    \subfloat[W-N1 Rand Scores]{\includegraphics[width=0.45\textwidth]{img/n1rs.png}}
+    \hfill
+    \subfloat[W-N2 Rand Scores]{\includegraphics[width=0.45\textwidth]{img/n2rs.png}}
+    \hfill
+    \subfloat[W-N3 Rand Scores]{\includegraphics[width=0.45\textwidth]{img/n3rs.png}}
+    \hfill
+    \caption[]{Rand Index para W vs \{N1, N2, N3\}\footnotemark}
+    \label{fig:RI_Alexander}
+\end{figure}
+\footnotetext{El \textit{p-valor} está representado por asteriscos.}
+
+La tendencia observada, donde los \textit{p-valores} tienden a aumentar con una mayor densidad, sugiere que a medida que se incrementa la cantidad de conexiones en el grafo, las diferencias en las particiones de comunidades pueden volverse menos evidentes o más difíciles de detectar de manera estadísticamente significativa, es decir, a medida que más conexiones se establecen entre las regiones cerebrales, las comunidades pueden volverse más flexibles y adaptativas, lo que dificulta la identificación de patrones de modularidad consistentes.
+
+\subsection{Rol de nodos, y cambios en el rol de los
+nodos}
+
+Se analizaron los roles que desempeñan los nodos dentro de las comunidades identificadas en cada estadío del sueño (N1, N2, N3) en comparación con el estadío despierto (W). El coeficiente de \textit{partición} ($P_i$) y el \textit{z-score} del grado intra-comunidad se usaron para clasificar los nodos de cada estadío. El procedimiento sigue los criterios propuestos por n Tagliazucchi y colaboradores (2013) \cite{Tagliazucchi:2013aa}, el cual se muestra en el pseudocódigo \ref{alg:Rolnodos}.
+
+\begin{algorithm}[H]
+\caption[]{Asignación de rol\footnotemark}
+\label{alg:Rolnodos}
+\begin{algorithmic}
+\State $\forall estadio \in \{N1, N2, N3\}$
+\State $z_i= \frac{k_i-<k>}{\sigma_k}$
+\State $P_i= 1- \sum_{j}^{N_{M}} \left( \frac{k_i^{U_j}}{k_i} \right)^2$
+
+\If{$P_i > P_C \ \& \ z_i> z_c$}
+    \State $Hubs$
+\Else \If{$P_i < P_C \ \& \ z_i > z_c$}
+    \State $Provincial Hubs$
+\Else \If{$P_i < P_C \ \& \ z_i < z_c$}
+    \State $Provincial Nodes$
+\Else \If{$P_i > P_C \ \& \ z_i < z_c$}
+    \State $Connector Nodes$
+\EndIf
+\EndIf
+\EndIf
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+\footnotetext{$k_i^{U_j}$: es el número de aristas en el nodo $i$  y la comunidad $j$, $N_M$ es el número de comunidades, y $k_i$ es el grado total del nodo $i$. Además $P_C=0.05$ y $z_C=1$}
+
+En el algoritmo \ref{alg:Rolnodos} se definen cuatro roles distintos. La figuras \ref{fig:n1_rol_cambios}, \ref{fig:n2_rol_cambios} y \ref{fig:n3_rol_cambios} muestran los cambios de los roles de los nodos en función de $\delta$.
+
+\paragraph{Hubs:} Nodos con alta participación en las comunidades ($P_i > P_C$) y alto grado intra-comunidad ($z_i > z_C$). Como se aprecia en las figuras \ref{n1_hubs}, \ref{n2_hubs} y \ref{n3_hubs} se aprecia un crecimiento del número de nodos conectores y un máximo al final del intervalo. Hecho que indica que al aumentar $\delta$ algunos nodos asumen roles más destacados con una mayor centralidad y participación de estos en la actividad. Es decir, la actividad cerebral se vuelve más densa y conectada.
+
+\paragraph{Provincial Hubs:} Nodos con baja participación en las comunidades ($P_i < P_C$) pero alto grado intra-comunidad ($z_i > z_C$). Como se aprecia en las figuras \ref{n1_prov_hubs}, \ref{n2_prov_hubs} y \ref{n3_prov_hubs} se aprecia un máximo en el intervalo $\delta \in (0,5\cdot10^{-2}]$ seguido de un descenso con algunas \textit{plateas}.
+
+\paragraph{Provincial Nodes:} Nodos con baja participación en las comunidades ($P_i < P_C$) y bajo grado intra-comunidad ($z_i < z_C$). Como se aprecia en las figuras \ref{n1_prov_nodes}, \ref{n2_prov_nodes} y \ref{n3_prov_nodes} se aprecia un descenso en todo el intervalo de $\delta$.
+
+\paragraph{Connector Nodes:} Nodos con alta participación en las comunidades ($P_i > P_C$) pero bajo grado intra-comunidad ($z_i < z_C$). Como se aprecia en las figuras \ref{n1_con_nodes}, \ref{n2_con_nodes} y \ref{n3_con_nodes} se aprecia un crecimiento del número de nodos conectores y un máximo al final del intervalo.
+
+En general, el numero de \textit{Nodos conectores} y \textit{Hubs} conforme aumenta $\delta$, contrario a lo que pasa con los \textit{Nodos provinciales} y \textit{Hubs provinciales}.
+
+
+La figura \ref{fig:n2_rol_cambios} muestra los cambios en los roles para el estadío N2 en función de $\delta$.
+
+
+\begin{figure}[H]
+    \centering
+    \subfloat[Nodos provinciales]{\includegraphics[width=0.42\textwidth]{img/n1prov_nodes.png}\label{n1_prov_nodes}}
+    \hfill
+    \subfloat[Hubs provinciales]{\includegraphics[width=0.42\textwidth]{img/n1prov_hubs.png}\label{n1_prov_hubs}}
+    \hfill
+    \subfloat[Nodos conectores]{\includegraphics[width=0.42\textwidth]{img/n1con_nodes.png}\label{n1_con_nodes}}
+    \hfill
+    \subfloat[Hubs]
+    {\includegraphics[width=0.42\textwidth]{img/n1hubs.png}\label{n1_hubs}}
+    \hfill
+    \caption[]{W vs N1: Nodos provinciales, Hubs provinciales, Nodos conectores y Hubs\footnotemark}
+    \label{fig:n1_rol_cambios}
+\end{figure}
+\footnotetext{El \textit{p-valor} está representado por asteriscos.}
+
+\begin{figure}[H]
+    \centering
+    \subfloat[Nodos provinciales]{\includegraphics[width=0.42\textwidth]{img/n2prov_nodes.png}\label{n2_prov_nodes}}
+    \hfill
+    \subfloat[Hubs provinciales]{\includegraphics[width=0.42\textwidth]{img/n2prov_hubs.png}\label{n2_prov_hubs}}
+    \hfill
+    \subfloat[Nodos conectores]{\includegraphics[width=0.42\textwidth]{img/n2con_nodes.png}\label{n2_con_nodes}}
+    \hfill
+    \subfloat[Hubs]
+    {\includegraphics[width=0.42\textwidth]{img/n2hubs.png}\label{n2_hubs}}
+    \hfill
+    \caption[]{W vs N2: Nodos provinciales, Hubs provinciales, Nodos conectores y Hubs\footnotemark}
+    \label{fig:n2_rol_cambios}
+\end{figure}
+\footnotetext{El \textit{p-valor} está representado por asteriscos.}
+
+La figura \ref{fig:n3_rol_cambios} muestra los cambios en los roles para el estadío N3 en función de $\delta$.
+
+\begin{figure}[H]
+    \centering
+    \subfloat[Nodos provinciales]{\includegraphics[width=0.45\textwidth]{img/n3prov_nodes.png}\label{n3_prov_nodes}}
+    \hfill
+    \subfloat[Hubs provinciales]{\includegraphics[width=0.45\textwidth]{img/n3prov_hubs.png}\label{n3_prov_hubs}}
+    \hfill
+    \subfloat[Nodos conectores]{\includegraphics[width=0.45\textwidth]{img/n3con_nodes.png}\label{n3_con_nodes}}
+    \hfill
+    \subfloat[Hubs]
+    {\includegraphics[width=0.45\textwidth]{img/n3hubs.png}\label{n3_hubs}}
+    \hfill
+    \caption[]{W vs N3: Nodos provinciales, Hubs provinciales, Nodos conectores y Hubs\footnotemark}
+    \label{fig:n3_rol_cambios}
+\end{figure}
+\footnotetext{El \textit{p-valor} está representado por asteriscos.}
+
+Finalmente, se eligió una partición con ayuda del algoritmo de Louvain el cual maximiza la modularidad haciendo uso de heurísticas\cite{SciPyProceedings_11}. La tabla \ref{Tab:resultados} muestra los roles de cada uno de los nodos y sus cantidades.
+
+\begin{table}[H]
+\begin{tabular}{ll}
+\hline
+\textbf{Item}                                               & \textbf{Valor}                \\ \hline
+\multicolumn{1}{|l|}{Nodos Conectores}                      & \multicolumn{1}{l|}{63}       \\ \hline
+\multicolumn{1}{|l|}{Nodos Provinciales}                    & \multicolumn{1}{l|}{35}       \\ \hline
+\multicolumn{1}{|l|}{Hubs Provinciales}                     & \multicolumn{1}{l|}{15}       \\ \hline
+\multicolumn{1}{|l|}{Hubs}                                  & \multicolumn{1}{l|}{3}        \\ \hline
+\multicolumn{1}{|l|}{Modularidad de la partición óptima}    & \multicolumn{1}{l|}{0.49}     \\ \hline
+\end{tabular}
+\captionof{table}{Resultados partición óptima\label{Tab:resultados}}
+\end{table}
+
+La figura \ref{fig:hubs_prov_hubs_con_nodes} muestra los nodos y sus roles respectivos.
+
+\begin{figure}[H]
+    \centering
+    {\includegraphics[width=0.9\textwidth]{img/Hubs_Prov_Hubs_Con_Nodes.png}}
+    \caption[]{Nodos provinciales, Hubs provinciales, Nodos conectores y Hubs \footnotemark}
+    \label{fig:hubs_prov_hubs_con_nodes}
+\end{figure}
+\footnotetext{NC: Nodo conector, HP: Hub provincial, H: Hub, NP: Nodo provincial}
+
+\section{Conclusiones}
+\label{others}
+
+\begin{itemize}
+\item La disminución en la modularidad en el número de comunidades con el aumento de la densidad de enlaces sugiere una transición hacia una red cerebral más cohesionada y menos fragmentada.
+\item El aumento en el número de \textit{Hubs} con el incremento de la densidad de enlaces sugiere una relación entre la conectividad cerebral y la densidad de la actividad, lo cual abre nuevas perspectivas para investigar las complejidades de la red neuronal en distintos estados del sueño.
+\item El incremento en el número de \textit{Conector Nodes} con el aumento de la densidad de enlaces destaca la importancia de ciertos nodos como facilitadores clave de la comunicación entre distintas partes del cerebro durante los diferentes estados del sueño.
+\item La disminución en el número de \textit{Provincial Hubs} con el aumento de la densidad de enlaces sugiere una transición hacia una mayor integración y coordinación a nivel global en la red cerebral.
+\item La disminución en el número de \textit{Provincial Nodes} con el aumento de la densidad de enlaces sugiere una transición hacia una red cerebral más interconectada y globalmente eficiente.
+\item Se observa un comportamiento diferente entre el estado W y el estado N2 y N3 en diferentes métricas de evaluación (Modularidad, Nc, Comunidades, etc) Las diferencias entre W y N1 son mucho menores, o inexistentes en algunos caso, lo que se corresponde con ser el comportamiento del sueño más cercano al estado de vigilia. Todas ellas son significativamente distintas a una red aleatoria.
+\item La selección del calculo de comunidades es relevante. Newman tiende con mayor rapidez hacia una red random, mientras que Louvain mantiene una diferencia significativa hasta las densidades evaluadas.
+
+\end{itemize}
+
+\medskip
+
+{
+\small
+\bibliographystyle{ieeetr}
+\bibliography{bibliography}
+}
+
+\end{document}
